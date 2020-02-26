@@ -19,11 +19,17 @@ rule token = parse
 	| "eq"             { EQ }
 	| "lt"             { LT }
 	| "->"						 { Fleche }	
+	| "CONST"					 { CONST }
+	| "FUN"						 { FUN }
+	| "REC"						 { REC }
 	| '*'							 { Star }
 	| ':'							 { Points }
 	| ',' 						 { Comma }
 	| '('              { LPAR }
 	| ')'              { RPAR }
+	| '['							 { LBRA }
+	| ']'						   { RBRA }
+	| ';'							 { PC }
 	| "true"					 { True }
 	| "false"          { False }
 	| "if"             { If }

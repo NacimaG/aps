@@ -22,6 +22,12 @@ type token =
   | Points
   | Star
   | Comma
+  | LBRA
+  | RBRA
+  | CONST
+  | FUN
+  | REC
+  | PC
 
-val arg :
-  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Ast.arg 
+val progs :
+  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Ast.progs

@@ -14,6 +14,8 @@
 %token Points
 %token Star
 %token Comma
+%token LBRA RBRA
+%token CONST FUN REC PC
 
 %type <Ast.expr> expr
 %type <Ast.expr list> exprs
@@ -22,9 +24,13 @@
 %type <Ast.typeAps list> typesAps
 %type <Ast.arg > arg
 %type <Ast.arg list> args
+%type <Ast.dec > dec
+%type <Ast.cmds > cmds
+%type <Ast.progs> progs
 
 
-%start arg             /* the entry point */
+
+%start progs             /* the entry point */
 
 %%
 
@@ -40,9 +46,11 @@ expr:
 	| LPAR OR exprs RPAR     { ASTPrim(Ast.Or, $3) }
 	| LPAR EQ exprs RPAR     { ASTPrim(Ast.Eq, $3) }
 	| LPAR LT exprs RPAR     { ASTPrim(Ast.Lt, $3) }
-	| True 									 { ASTBool(Ast.True)}
-	| False 								 { ASTBool(Ast.False)}
-	| LPAR If exprs RPAR     {ASTAlt(Ast.If, $3)}
+	| True 									 { ASTBool(Ast.True) }
+	| False 								 { ASTBool(Ast.False) }
+	| LPAR If exprs RPAR     { ASTAlt(Ast.If, $3) }
+	| LBRA args RBRA expr		 { ASTArgsE($2, $4) }
+	| LPAR expr exprs RPAR 	 { ASTExpressions($2, $3) } 
 	;
 
 exprs:
@@ -71,4 +79,20 @@ args:
 	  | arg Comma args 											{ $1::$3 }
 		;
 
+dec:
+		 CONST IDENT typeAps expr 										{ASTConst (Ast.CONST, $2,$3,$4)}
+		| FUN IDENT typeAps LBRA args RBRA expr 	  	{ASTFun (Ast.FUN, ASTId($2), $3, ASTArgsE($5, $7))}
+		|FUN REC IDENT typeAps LBRA args RBRA expr		{ASTRec (Ast.FUN, Ast.REC, ASTId($3), $4, ASTArgsE($6, $8))}
+		;
+
 		
+
+cmds:
+			stat 			   																{ASTTerm($1)}
+		| dec PC cmds																	{ASTNTermD($1, Ast.PC, $3)}
+		| stat PC cmds  														  {ASTNTermS($1, Ast.PC, $3)}
+		;
+
+progs:
+		LBRA cmds RBRA 																{ASTProg($2)}
+		; 

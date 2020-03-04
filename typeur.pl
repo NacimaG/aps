@@ -1,73 +1,93 @@
-%TYPE
-type(_, num(_),int).
+%variable en maj
+%type en min
 
+%NUM
+type(_, num(_),int).
+%BOOL
 type(_,true,bool).
 type(_,false,bool).
-
 type(_,[],void).
 
 %SYM
-expr(G,x,t):-type(G,x,t). % not sure
+sym(G,X,T):-
+    expr(G,X,T);
+    type(G,X,num);
+    type(G,X,bool).
 
 %ABS
-abs(G,e,t):-
-    type(G,e,t).
+abs(G,[(Head,Type)|Tail],T):-
+    type(G,Head,Type),
+    abs(G,Tail,T).
 
 %APP
-
-% EXPR
-exprAdd(G,add(x,y),int):-
-    type(G,x,int), 
-    type(G,y,int).
-
-exprSub(G,sub(x,y),int):-
-    type(G,x,int), 
-    type(G,y,int).
-
-exprMult(G,mult(x,y),int):-
-    type(G,x,int), 
-    type(G,y,int).
-
-exprDiv(G,div(x,y),int):-
-    type(G,x,int), 
-    type(G,y,int).
-
-exprEq(G,eq(x,y),bool):-
-    type(G,x,int), 
-    type(G,y,int).
-
-exprLt(G,lt(x,y),bool):-
-    type(G,x,int), 
-    type(G,y,int).
-
-exprAnd(G,and(x,y),bool):-
-    type(G,x,bool), 
-    type(G,y,bool).
-
-exprOr(G,or(x,y),bool):-
-    type(G,x,bool), 
-    type(G,y,bool).
-
-exprNot(G,not(x),bool):-
-    type(G,x,bool).
-
-typeExprVar(G,var(x),t):- 
-    type(G,x,ident).
+% app(G,,t).
 
 
-exprCond(G,if(e1,e2,e3),t):- 
-    type(G,e1,bool),
-    type(G,e2,t),
-    type(G,e3,t).
+%IF
+exprCond(G,if(Cond,Do,Else),T):- 
+    type(G,Cond,bool),
+    type(G,Do,T),
+    type(G,Else,T).
 
-%STAT
+%ECHO
+stat(_,echo(E),void):-
+ type(_,E,int). 
 
-stat(_,echo(e),void):-
- type(_,e,int). 
+
+%CONST
+dec(G,const(X,T,E),Env):-
+    type(G,E,T).
+    
+
+
+% expr
+expr(G,add(X,Y),int):-
+    type(G,X,int), 
+    type(G,Y,int).
+
+expr(G,sub(X,Y),int):-
+    type(G,X,int), 
+    type(G,Y,int).
+
+expr(G,mult(X,Y),int):-
+    type(G,X,int), 
+    type(G,Y,int).
+
+expr(G,div(X,Y),int):-
+    type(G,X,int), 
+    type(G,Y,int).
+
+expr(G,eq(X,Y),bool):-
+    type(G,X,int), 
+    type(G,Y,int).
+
+expr(G,lt(X,Y),bool):-
+    type(G,X,int), 
+    type(G,Y,int).
+
+expr(G,and(X,Y),bool):-
+    type(G,X,bool), 
+    type(G,Y,bool).
+
+expr(G,or(X,Y),bool):-
+    type(G,X,bool), 
+    type(G,Y,bool).
+
+expr(G,not(X),bool):-
+    type(G,X,bool).
+
+expr(G,var(X),T):- 
+    type(G,X,T).
+
+
+
 
 %DEC
-%dec(G,const(x,t,:-
- %type(G,e,t).
+%dec(G,const(X,T,E):-
+ %type(G,E,T).
+
+
+%END
 
 %CMDS
 

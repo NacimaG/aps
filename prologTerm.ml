@@ -9,7 +9,7 @@ let rec print_expr e =
 		print_exprs es;
 		Printf.printf")"
 	)
-	|ASTBool b -> Printf.printf "bool(%s)" (string_of_bool b)
+	|ASTBool b -> Printf.printf "%s" (string_of_bool b)
 	
 	|ASTAlt(alt, res) ->(
 		Printf.printf "if";

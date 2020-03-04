@@ -67,4 +67,3 @@ dec(G,CONST(x,t,e),G[x:t]):-
 
 %CMDS
 %PROG
-

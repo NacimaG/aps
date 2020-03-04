@@ -396,7 +396,7 @@ let yyact = [|
     let _3 = (Parsing.peek_val __caml_parser_env 1 : Ast.typeAps ) in
     let _4 = (Parsing.peek_val __caml_parser_env 0 : Ast.expr) in
     Obj.repr(
-# 83 "parser.mly"
+# 84 "parser.mly"
                                       (ASTConst (Ast.CONST, _2,_3,_4))
 # 402 "parser.ml"
                : Ast.dec ))
@@ -406,8 +406,8 @@ let yyact = [|
     let _5 = (Parsing.peek_val __caml_parser_env 2 : Ast.arg list) in
     let _7 = (Parsing.peek_val __caml_parser_env 0 : Ast.expr) in
     Obj.repr(
-# 84 "parser.mly"
-                                              (ASTFun (Ast.FUN, ASTId(_2), _3, ASTArgsE(_5, _7)))
+# 85 "parser.mly"
+                                              (ASTFun (Ast.FUN, ASTId(_2), _3, _5, _7))
 # 412 "parser.ml"
                : Ast.dec ))
 ; (fun __caml_parser_env ->
@@ -416,14 +416,14 @@ let yyact = [|
     let _6 = (Parsing.peek_val __caml_parser_env 2 : Ast.arg list) in
     let _8 = (Parsing.peek_val __caml_parser_env 0 : Ast.expr) in
     Obj.repr(
-# 85 "parser.mly"
-                                              (ASTRec (Ast.FUN, Ast.REC, ASTId(_3), _4, ASTArgsE(_6, _8)))
+# 86 "parser.mly"
+                                              (ASTRec (Ast.FUN, Ast.REC, ASTId(_3), _4, _6, _8))
 # 422 "parser.ml"
                : Ast.dec ))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : Ast.stat) in
     Obj.repr(
-# 91 "parser.mly"
+# 92 "parser.mly"
                               (ASTTerm(_1))
 # 429 "parser.ml"
                : Ast.cmds ))
@@ -431,7 +431,7 @@ let yyact = [|
     let _1 = (Parsing.peek_val __caml_parser_env 2 : Ast.dec ) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : Ast.cmds ) in
     Obj.repr(
-# 92 "parser.mly"
+# 93 "parser.mly"
                                 (ASTNTermD(_1, Ast.PC, _3))
 # 437 "parser.ml"
                : Ast.cmds ))
@@ -439,14 +439,14 @@ let yyact = [|
     let _1 = (Parsing.peek_val __caml_parser_env 2 : Ast.stat) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : Ast.cmds ) in
     Obj.repr(
-# 93 "parser.mly"
+# 94 "parser.mly"
                                   (ASTNTermS(_1, Ast.PC, _3))
 # 445 "parser.ml"
                : Ast.cmds ))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 1 : Ast.cmds ) in
     Obj.repr(
-# 97 "parser.mly"
+# 98 "parser.mly"
                                  (ASTProg(_2))
 # 452 "parser.ml"
                : Ast.progs))

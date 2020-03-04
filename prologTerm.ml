@@ -5,27 +5,29 @@ let rec print_expr e =
 	| ASTId x -> Printf.printf"var(%s)" x
 	| ASTPrim(op, es) -> (
 		Printf.printf"%s" (string_of_op op);
-		Printf.printf"([";
+		Printf.printf"(";
 		print_exprs es;
-		Printf.printf"])"
+		Printf.printf")"
 	)
 	|ASTBool b -> Printf.printf "bool(%s)" (string_of_bool b)
 	
 	|ASTAlt(alt, res) ->(
 		Printf.printf "if";
-		Printf.printf "([";
+		Printf.printf "(";
 		print_exprs res;
-		Printf.printf "[)"	
+		Printf.printf ")"	
 	) 
 	|ASTArgsE(ars,e) ->(
-		Printf.printf "[";
+		Printf.printf "(";
 		print_args ars;
-		Printf.printf "]";
-		print_expr e
+		Printf.printf ", ";
+		print_expr e;
+		Printf.printf ")";
 	)
 	|ASTExpressions(e,es) ->(
 		Printf.printf "(";
 		print_expr e;
+		print_char ',';
 		print_exprs es;
 		Printf.printf ")"
 	)
@@ -46,23 +48,33 @@ let rec print_expr e =
 	match t with
 	ASTTprim t -> Printf.printf "%s" (string_of_type t)
 	| ASTArrow (ts, arrow, t) -> (
-		Printf.printf "(";
+		Printf.printf "fleche(";
 		print_types ts;
-		Printf.printf "->" ;
+		Printf.printf ", " ;
 		print_type t;
 		Printf.printf")"
 	)
+
+	and print_types_elem ts =
+	match ts with
+	[]->()
+	| [t] -> print_type t
+	| t::ts -> (
+		print_type t;
+		Printf.printf ", ";
+		print_types ts;
+		)
 
 	and print_types ts =
 	match ts with
 	[] -> ()
 	| [t] -> print_type t
 	| t::ts -> (
-		Printf.printf "(";
+		Printf.printf "[";
 		print_type t;
-		Printf.printf "*";
-		print_types ts;
-		Printf.printf ")";
+		Printf.printf ", ";
+		print_types_elem ts;
+		Printf.printf "]";
 		)
 
 	and print_arg a =
@@ -70,7 +82,7 @@ let rec print_expr e =
 		ASTArg (a,p,t) -> ( 
 			Printf.printf "(";
 			print_expr a ;
-			Printf.printf "%s" (string_of_p p);
+			Printf.printf ",";
 			print_type t; 
 			Printf.printf ")";
 		)
@@ -79,49 +91,48 @@ let rec print_expr e =
 		[] -> ()
 		| [a] -> print_arg a
 		| a::ars -> (
-			Printf.printf "(";
 			print_arg a;
-			Printf.printf ",";
+			Printf.printf ", ";
 			print_args ars;
-			Printf.printf ")";
 			)
 
 	and print_dec d =
 		match d with
 		ASTConst (c, i, t, e) -> (
-			Printf.printf "(";
 			Printf.printf "%s" (string_of_const c);
-			Printf.printf " ";
+			Printf.printf "(";
 			Printf.printf "%s" i;
-			Printf.printf " ";
+			Printf.printf ", ";
 			print_type t;
-			Printf.printf " ";
+			Printf.printf ", ";
 			print_expr e;
 			Printf.printf ")";
 		)
-		| ASTFun (f, i, t, ars) -> (
-			Printf.printf "(";
+		| ASTFun (f, i, t, ars, e) -> (
 			Printf.printf "%s" (string_of_fun f);
-			Printf.printf " ";
+			Printf.printf "(";
 			print_expr i;
-			Printf.printf " ";
+			Printf.printf ", ";
 			print_type t;
-			Printf.printf " ";
-			print_expr ars;
-			Printf.printf ")";
+			Printf.printf ", [";
+			print_args ars;
+			Printf.printf "], ";
+			print_expr e;
+			Printf.printf")";
 		)
-		| ASTRec (f, r, i, t, ars) -> (
-			Printf.printf "(";
+		| ASTRec (f, r, i, t, ars, e) -> (
 			Printf.printf "%s" (string_of_fun f);
-			Printf.printf " ";
+			Printf.printf "(";
 			Printf.printf "%s" (string_of_rec r);
-			Printf.printf " ";
+			Printf.printf ", ";
 			print_expr i;
-			Printf.printf " ";
+			Printf.printf ", ";
 			print_type t;
-			Printf.printf " ";
-			print_expr ars;
-			Printf.printf ")";
+			Printf.printf ", [";
+			print_args ars;
+			Printf.printf "], ";
+			print_expr e;
+			Printf.printf")";
 		)
 	
 	and print_stat e = 
@@ -134,27 +145,28 @@ let rec print_expr e =
 	let rec print_cmds s =
 		match s with
 			ASTTerm s -> (
+				Printf.printf "\t";
 				print_stat s
 			)
 			| ASTNTermD (d, p, c) -> (
+				Printf.printf "\t";
 				print_dec d;
-				Printf.printf " ";
-				Printf.printf "%s " (string_of_pc p);
+				Printf.printf "%s\n" (string_of_pc p);
 				print_cmds c;
 			)
 			| ASTNTermS (s,p,c) -> (
+				Printf.printf "\t";
 				print_stat s;
-				Printf.printf " ";
-				Printf.printf "%s " (string_of_pc p);
+				Printf.printf "%s\n" (string_of_pc p);
 				print_cmds c;
 			)
 
 	let print_progs p =
 		match p with
 		ASTProg cs -> (
-		   print_string"prog(";	
+		   print_string"prog(\n";	
 			print_cmds cs;
-			print_string ")"
+			print_string "\n)"
 			)
 	;;
 

@@ -30,8 +30,8 @@ and typeAps =
 	
 and dec =
 	 ASTConst of const * string * typeAps * expr
-	 | ASTFun of func * expr * typeAps * expr
-	 | ASTRec of func * rc * expr * typeAps * expr
+	 | ASTFun of func * expr * typeAps * arg list * expr
+	 | ASTRec of func * rc * expr * typeAps * arg list * expr
  
 and stat =
 	ASTEcho of expr 

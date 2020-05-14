@@ -1,5 +1,0 @@
-[
-    FUN v int [a:int, b:int] (eq (add a v) true);
-    FUN REC v int [z:int, y:int] (add (add z v) y);
-    ECHO v
-]

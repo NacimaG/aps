@@ -1,4 +1,0 @@
-[
-    CONST x (int*int*bool->int) [v:int] (add v 1);
-    ECHO v
-]

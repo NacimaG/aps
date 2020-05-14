@@ -1,1 +1,0 @@
-CONST g ([int * int]->int) [x:int,y:int](or x y)

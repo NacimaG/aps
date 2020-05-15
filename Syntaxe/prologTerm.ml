@@ -4,10 +4,10 @@ let rec print_expr e =
 	ASTNum n -> Printf.printf"num(%d)" n
 	| ASTId x -> Printf.printf"var(%s)" x
 	| ASTPrim(op, es) -> (
-		Printf.printf"%s" (string_of_op op);
-		Printf.printf"(";
+		Printf.printf"app(sym(%s)" (string_of_op op);
+		Printf.printf"[";
 		print_exprs es;
-		Printf.printf")"
+		Printf.printf"])"
 	)
 	|ASTBool b -> Printf.printf "%s" (string_of_bool b)
 	

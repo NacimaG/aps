@@ -1,3 +1,25 @@
+
+%%
+% Type ::= int | bool | void | arrow([Type],Type)
+
+%%
+% Contextes: [(Var,Type)]
+
+% Un contexte de variables -- modifier selon les tests
+varCtx([]).
+
+% Contexte initial
+primCtx([(add,arrow([int,int],int)),
+	(sub,arrow([int,int],int)),
+	(mul,arrow([int,int],int)),
+	(div,arrow([int,int],int))
+       ]).
+
+% Accès
+fetchType([(X,T)|_],X,T) :- !.
+fetchType([_|G],X,T) :- fetchType(G,X,T).
+
+
 %variable en maj
 %type en min
 
@@ -11,7 +33,6 @@ type(_,[],void).
 %SYM
 sym(G,X,T):-
     expr(G,X,T);
-    type(G,X,num);
     type(G,X,bool).
 
 %ABS
@@ -40,7 +61,7 @@ dec(G,const(X,T,E),Env):-
     
 
 
-% expr
+%Expr
 expr(G,add(X,Y),int):-
     type(G,X,int), 
     type(G,Y,int).
@@ -92,3 +113,12 @@ expr(G,var(X),T):-
 %CMDS
 
 %PROG
+
+%
+main_stdin :-
+    read(user_input,T),
+    typeur(T,R),
+    print(R),
+    nl,
+    exitCode(R).
+

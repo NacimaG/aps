@@ -13,7 +13,7 @@ type pc = PC
 
 
 type expr =
-ASTNum of int
+  ASTNum of int
 | ASTId of string
 | ASTPrim of op * expr list
 | ASTBool of cbool

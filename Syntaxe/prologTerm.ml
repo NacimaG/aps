@@ -1,7 +1,7 @@
 open Ast
 let rec print_expr e =
 	match e with
-	ASTNum n -> Printf.printf"num(%d)" n
+	  ASTNum n -> Printf.printf"num(%d)" n
 	| ASTId x -> Printf.printf"var(%s)" x
 	| ASTPrim(op, es) -> (
 		Printf.printf"app(sym(%s)" (string_of_op op);
@@ -138,7 +138,7 @@ let rec print_expr e =
 	and print_stat e = 
 				match e with 
 				 ASTEcho arg -> (Printf.printf "echo(";
-											 (print_expr arg);
+											  print_expr arg;
 												Printf.printf ")"
 				)
 	
@@ -164,7 +164,7 @@ let rec print_expr e =
 	let print_progs p =
 		match p with
 		ASTProg cs -> (
-		   print_string"prog(\n";	
+		   print_string "prog(\n";	
 			print_cmds cs;
 			print_string "\n)"
 			)
@@ -174,16 +174,12 @@ let rec print_expr e =
 	let ic = open_in fname in
 	try
 		let lexbuf = Lexing.from_channel ic in
-(*		let e = Parser.expr Lexer.token lexbuf in 
-		let e = Parser.stat Lexer.token lexbuf in 
-		let e = Parser.typeAps Lexer.token lexbuf in
-		let e = Parser.arg Lexer.token lexbuf in*)
 		let d = try Parser.progs Lexer.token lexbuf with Lexer.Eof -> raise Not_found in
 
-(*		print_expr e;
-		print_stat e; *)
 		print_progs d;
-		print_char '\n'
+		print_string ".\n"
 	with Lexer.Eof ->
+		exit 0 
+	(*
 	print_string"eof(2)\n"
-	| Not_found -> print_string "eof(1)\n"
+	| Not_found -> print_string "eof(1)\n"*)

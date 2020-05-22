@@ -12,37 +12,46 @@ varCtx([]).
 primCtx([(add,arrow([int,int],int)),
 	(sub,arrow([int,int],int)),
 	(mul,arrow([int,int],int)),
-	(div,arrow([int,int],int))
-       ]).
+    (div,arrow([int,int],int)),
+    (eq,arrow([int,int],bool)),
+    (lt,arrow([int,int],bool)),
+    (and,arrow([bool,bool],bool)),
+    (or,arrow([bool,bool],bool)),
+    (not,bool,bool) ]).
 
 % Accès
-fetchType([(X,T)|_],X,T) :- !.
-fetchType([_|G],X,T) :- fetchType(G,X,T).
+type([(X,T)|_],X,T) :- !.
+type([_|G],X,T) :- type(G,X,T).
 
 %%
 % Expr
-typeExpr(_,num(_),int).
+expr(_,num(_),int).
 
-typeExpr(G,sym(X),T) :- fetchType(G,X,T).
+expr(G,sym(X),T) :- type(G,X,T).
     
-typeExpr(G,if(E1,E2,E3),T) :-
-    typeExpr(G,E1,bool), typeExpr(G,E2,T), typeExpr(G,E3,T).
+expr(G,if(Cond,Do,Else),T) :- expr(G,Cond,bool),
+                              expr(G,Do,T), 
+                              expr(G,Else,T).
 
-typeExpr(G,app(F,ES),T) :- typeExpr(G,F,arrow(TS,T)), typeExprs(G,ES,TS).
-
-%
-typeExprs(_,[],[]).
-typeExprs(G,[E|ES],[T|TS]) :- typeExpr(G,E,T), typeExprs(G,ES,TS).
+expr(G,app(F,ES),T) :- expr(G,F,arrow(TS,T)), 
+                       exprs(G,ES,TS).
 
 %
-typeStat(G,echo(E),void) :- typeExpr(G,E,int).    
+exprs(_,[],[]).
+exprs(G,[E|ES],[T|TS]) :- expr(G,E,T), 
+                          exprs(G,ES,TS).
 
 %
-typeProg(G,prog(S)) :- typeStat(G,S,void).
+tStat(G,echo(E),void) :- expr(G,E,int).    
 
 %
-typeCheck(P,ok) :- varCtx(GP), primCtx(G0), append(GP,G0,G),
-		   typeProg(G,P).
+tProg(G,prog(S)) :- tStat(G,S,void).
+
+%
+typeCheck(P,ok) :- varCtx(GP), 
+                   primCtx(G0), 
+                   append(GP,G0,G),
+		   tProg(G,P).
 typeCheck(_,ko).    
 
 

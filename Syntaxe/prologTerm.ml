@@ -106,9 +106,9 @@ let rec print_expr e =
 			Printf.printf "const";
 			Printf.printf "(";
 			Printf.printf "var(%s)" e1;
-			Printf.printf ",";
-			print_type e2 ;
 			Printf.printf ";";
+			print_type e2 ;
+			Printf.printf ",";
 			print_expr e3;
 			Printf.printf ")"
 		)

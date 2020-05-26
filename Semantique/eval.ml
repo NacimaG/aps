@@ -1,9 +1,8 @@
 open Ast
 open Env
-
-type value = Im of int 
+type value = Im of int  
             | B of bool 
-            | InF of expr * (string list) 
+            | FClo of expr * (string list) 
 
 
 
@@ -54,7 +53,10 @@ let rec eval_cmds env cm =
       let env1 = eval_dec env d in
         eval_cmds env1 c 
     )
-
+    | ASTNTermS(s,p,c) ->(
+        eval_stat env s ;
+        eval_cmds env c
+      )
 
 
 and eval_prog env p =
@@ -74,20 +76,44 @@ and eval_stat env s =
      
       )
       
+and eval_arg env a = 
+  match a with 
+  |ASTArg(a,p,t) -> 
+    (
+      let env1 = (add env a t) in 
+        env1
+    )
+and eval_args env ars =
+  match ars with
+  [a] -> eval_arg a 
+  e::es -> (eval_arg e):: eval_args es   
+
 and eval_expr env e =
   match e with
-      ASTNum n -> Im n
-    | ASTPrim(f,es) -> (pi f) (Array.map (eval_expr env) (Array.of_list es))(*eval_exprs env es*)
-    | ASTAlt(alt,e1,e2,e3) -> match (eval_expr env e1) with 
+      Ast.ASTNum n -> Im n
+    | ASTId x -> get env x
+    | ASTPrim(f,es) -> (
+        (pi f) (Array.map (eval_expr env) (Array.of_list es))
+        )(*eval_exprs env es*)
+    | ASTAlt(alt,e1,e2,e3) -> (match (eval_expr env e1) with 
                                 B true -> (eval_expr env e2)
-                                | B false -> (eval_expr env e3) 
+                              | B false -> (eval_expr env e3) 
+    
+    )
+   (* | ASTArgsE(ars,e) -> *)
+    
 
 and eval_dec env d = 
 match d with 
 (*CONST Ident Type eXPR)*)
-  ASTConst (e1,e2,e3) ->
+  ASTConst (e1,e2,e3) ->(
                 let Im n = (eval_expr env e3) in 
-                add [] (e1,Im n)
+                add env e1 (Im n)
+  )
+  | ASTFun (f,i,t,ars,e) ->
+       let arg= eval_args ars in
+         add env i FClo(e,arg,env,i)
+
  
 and eval_exprs env e =
   match e with 

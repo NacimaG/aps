@@ -2,7 +2,9 @@
 type t = (string * v) list
 and v =
     Im of int
-  | Prim of (v array -> v)
+  | ASTPrim of (v array -> v)
+  | FClo of string
+  | RClo of string
 
 
 let add r x v = (x,v)::r

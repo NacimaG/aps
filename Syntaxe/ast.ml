@@ -17,9 +17,10 @@ type expr =
 | ASTId of string
 | ASTPrim of op * expr list
 | ASTBool of cbool
-| ASTAlt of alt * expr list
+| ASTAlt of alt *expr * expr * expr 
 | ASTArgsE of arg list * expr
 | ASTExpressions of expr * expr list
+
 
 and arg =
 	ASTArg of expr * points * typeAps 
@@ -29,7 +30,7 @@ and typeAps =
 		| ASTArrow of typeAps list * arrow * typeAps
 	
 and dec =
-	 ASTConst of const * string * typeAps * expr
+	 ASTConst of string * typeAps * expr
 	 | ASTFun of func * expr * typeAps * arg list * expr
 	 | ASTRec of func * rc * expr * typeAps * arg list * expr
  
@@ -38,7 +39,7 @@ and stat =
 
 and cmds = 
 	ASTTerm of stat
-	| ASTNTermD of dec * pc * cmds
+	| ASTNTermD of dec * cmds
 	| ASTNTermS of stat * pc * cmds
 
 and progs =

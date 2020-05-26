@@ -1,0 +1,1 @@
+[CONST x int 3;FUN f int [y:int] (add y 2);ECHO (f 3)]

@@ -48,7 +48,7 @@ expr:
 	| LPAR LT exprs RPAR     												{ ASTPrim(Ast.Lt, $3) }
 	| True 									 												{ ASTBool(Ast.True) }
 	| False 								 												{ ASTBool(Ast.False) }
-	| LPAR If exprs RPAR     												{ ASTAlt(Ast.If, $3) }
+	| LPAR If expr expr expr RPAR     							{ ASTAlt(Ast.If, $3,$4,$5) }
 	| LBRA args RBRA expr		 												{ ASTArgsE($2, $4) }
 	| LPAR expr exprs RPAR 	 												{ ASTExpressions($2, $3) } 
 	;
@@ -59,7 +59,7 @@ exprs:
 	  ;
 
 stat:
-		ECHO expr 																		{ASTEcho($2)}
+		ECHO expr 																		{Ast.ASTEcho($2)}
 		;
 typeAps:
 			Int																					{ASTTprim(Ast.Int)} 						
@@ -81,7 +81,7 @@ args:
 
 	 /* | ASTFun of func * typeAps * arg list * expr */
 dec:
-		 CONST IDENT typeAps expr 										{ASTConst (Ast.CONST, $2,$3,$4)}
+		 CONST IDENT typeAps expr 										{ASTConst ($2,$3,$4)}
 		|FUN IDENT typeAps LBRA args RBRA expr 	  		{ASTFun (Ast.FUN, ASTId($2), $3, $5, $7)}
 		|FUN REC IDENT typeAps LBRA args RBRA expr		{ASTRec (Ast.FUN, Ast.REC, ASTId($3), $4, $6, $8)}
 		;
@@ -90,7 +90,7 @@ dec:
 
 cmds:
 			stat 			   																{ASTTerm($1)}
-		| dec PC cmds																	{ASTNTermD($1, Ast.PC, $3)}
+		| dec PC cmds																	{ASTNTermD($1,$3)}
 		| stat PC cmds  														  {ASTNTermS($1, Ast.PC, $3)}
 		;
 

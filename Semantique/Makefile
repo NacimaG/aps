@@ -9,8 +9,8 @@ I = -I ../Syntaxe
 
 
 
-eval : ../Syntaxe/ast.cmo ../Syntaxe/parser.cmo ../Syntaxe/lexer.cmo eval.ml
-	${CC} -o eval ${I} ast.cmo parser.cmo lexer.cmo eval.ml
+eval : ../Syntaxe/ast.cmo ../Syntaxe/parser.cmo ../Syntaxe/lexer.cmo env.ml eval.ml
+	${CC} -o eval ${I} ast.cmo parser.cmo lexer.cmo env.ml eval.ml
 
 clean :
 	rm -f *~

@@ -4,17 +4,21 @@ let rec print_expr e =
 	  ASTNum n -> Printf.printf"num(%d)" n
 	| ASTId x -> Printf.printf"var(%s)" x
 	| ASTPrim(op, es) -> (
-		Printf.printf"app(sym(%s)" (string_of_op op);
+		Printf.printf"app(sym(%s)," (string_of_op op);
 		Printf.printf"[";
 		print_exprs es;
 		Printf.printf"])"
 	)
 	|ASTBool b -> Printf.printf "%s" (string_of_bool b)
 	
-	|ASTAlt(alt, res) ->(
+	|ASTAlt(alt,e1,e2,e3) ->(
 		Printf.printf "if";
 		Printf.printf "(";
-		print_exprs res;
+		print_expr e1;
+		Printf.printf ",";
+		print_expr e2;
+		Printf.printf ",";
+		print_expr e3;
 		Printf.printf ")"	
 	) 
 	|ASTArgsE(ars,e) ->(
@@ -25,11 +29,11 @@ let rec print_expr e =
 		Printf.printf ")";
 	)
 	|ASTExpressions(e,es) ->(
-		Printf.printf "(";
+		Printf.printf "expressions([";
 		print_expr e;
 		print_char ',';
 		print_exprs es;
-		Printf.printf ")"
+		Printf.printf "])"
 	)
 
 
@@ -50,7 +54,7 @@ let rec print_expr e =
 	| ASTArrow (ts, arrow, t) -> (
 		Printf.printf "fleche(";
 		print_types ts;
-		Printf.printf ", " ;
+		Printf.printf "," ;
 		print_type t;
 		Printf.printf")"
 	)
@@ -92,81 +96,85 @@ let rec print_expr e =
 		| [a] -> print_arg a
 		| a::ars -> (
 			print_arg a;
-			Printf.printf ", ";
+			Printf.printf ",";
 			print_args ars;
 			)
 
 	and print_dec d =
 		match d with
-		ASTConst (c, i, t, e) -> (
-			Printf.printf "%s" (string_of_const c);
+		ASTConst (e1,e2,e3) ->(
+			Printf.printf "const";
 			Printf.printf "(";
-			Printf.printf "%s" i;
-			Printf.printf ", ";
-			print_type t;
-			Printf.printf ", ";
-			print_expr e;
-			Printf.printf ")";
+			Printf.printf "var(%s)" e1;
+			Printf.printf ",";
+			print_type e2 ;
+			Printf.printf ";";
+			print_expr e3;
+			Printf.printf ")"
 		)
+		
 		| ASTFun (f, i, t, ars, e) -> (
-			Printf.printf "%s" (string_of_fun f);
+			Printf.printf "fun" ;
 			Printf.printf "(";
 			print_expr i;
-			Printf.printf ", ";
+			Printf.printf ",";
 			print_type t;
-			Printf.printf ", [";
+			Printf.printf ",[";
 			print_args ars;
-			Printf.printf "], ";
+			Printf.printf "],";
 			print_expr e;
 			Printf.printf")";
 		)
 		| ASTRec (f, r, i, t, ars, e) -> (
-			Printf.printf "%s" (string_of_fun f);
-			Printf.printf "(";
-			Printf.printf "%s" (string_of_rec r);
-			Printf.printf ", ";
+			Printf.printf "funRec(" ;
 			print_expr i;
-			Printf.printf ", ";
+			Printf.printf ",";
 			print_type t;
-			Printf.printf ", [";
+			Printf.printf ",[";
 			print_args ars;
-			Printf.printf "], ";
+			Printf.printf "],";
 			print_expr e;
 			Printf.printf")";
 		)
 	
 	and print_stat e = 
 				match e with 
-				 ASTEcho arg -> (Printf.printf "echo(";
+				 ASTEcho(arg) -> (Printf.printf "echo(";
 											  print_expr arg;
 												Printf.printf ")"
 				)
 	
+			
+
+
 	let rec print_cmds s =
 		match s with
 			ASTTerm s -> (
-				Printf.printf "\t";
+				Printf.printf "";
 				print_stat s
 			)
-			| ASTNTermD (d, p, c) -> (
-				Printf.printf "\t";
+			| ASTNTermD (d, c) -> (
+				Printf.printf "termD(";
 				print_dec d;
-				Printf.printf "%s\n" (string_of_pc p);
+				Printf.printf "," ;
 				print_cmds c;
+				Printf.printf ")";
+
+
 			)
 			| ASTNTermS (s,p,c) -> (
-				Printf.printf "\t";
+				Printf.printf "";
 				print_stat s;
-				Printf.printf "%s\n" (string_of_pc p);
+				Printf.printf "%s" (string_of_pc p);
 				print_cmds c;
 			)
 
 	let print_progs p =
 		match p with
 		ASTProg cs -> (
-		   print_string "prog(\n";	
+		   print_string "prog(";	
 			print_cmds cs;
-			print_string "\n)"
+			print_string ")"
 			)
 	;;
 

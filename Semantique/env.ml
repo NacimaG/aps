@@ -3,8 +3,8 @@ type t = (string * v) list
 and v =
     Im of int
   | ASTPrim of (v array -> v)
-  | FClo of string
-  | RClo of string
+  | FClo of v * (string list) * t
+  | RClo of string * v * (string list) * t
 
 
 let add r x v = (x,v)::r
@@ -31,20 +31,20 @@ let get r x =
   try List.assoc x r
   with Not_found -> failwith ("get: unknown "^x)
 
-let print r =
-  Printf.printf"Env: ";;
-  List.iter
-    (fun (x,v) ->
-       match v with
-	   Im n -> Printf.printf"%s=#%d " x n
-	 (*| Prim _ -> Printf.printf"%s=[Prim]" x*)
-	 | FClo _ -> (
-	     Printf.printf"%s=[Clos]" x
-	   )
-	 | RClo _ -> (
-	     Printf.printf"%s=[RClos]" x
-	   )
-	 | _ -> ()    
-    )
-    r;
+  let print r =
+    Printf.printf"Env: ";
+    List.iter
+      (fun (x,v) ->
+         match v with
+       Im n -> Printf.printf"%s=#%d " x n
+     (*| Prim _ -> Printf.printf"%s=[Prim]" x*)
+     | FClo _ -> (
+         Printf.printf"%s=[Clos]" x
+       )
+     | RClo _ -> (
+         Printf.printf"%s=[RClos]" x
+       )
+     | _ -> ()    
+      )
+      r;
   Printf.printf"\n"

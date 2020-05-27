@@ -80,11 +80,8 @@ typeExpr(G,expressions([E|ES]),([T|TS])) :-
 %APP
 
 typeExpr(G,app(F,ES),T) :- 
-	write("app\n"),
 	typeExpr(G,F,arrow(TS,T)),
-	write("app1\n"), 
-	typeExprs(G,ES,TS),
-	write("finapp\n").
+	typeExprs(G,ES,TS).
 
 
 
@@ -115,12 +112,14 @@ typeStat(G,echo(E),void) :-
 
 
 % Dec ::= CONST ident Type Expr
-typeDec(G,const(X,T;E),[(X,T)|G]) :-
+typeDec(G,const(X;T,E),[(X,T)|G]) :-
 	write("totoA\n"),
 	typeExpr(G,E,T).
 
+%Fun
 
 typeDec(G,fun(var(X),T,AS,E),[(var(X),arrow(_,T))|G]) :-
+	write("fun\n"),
 	append(G,AS,G1),
 	typeExpr(G1,E,T).
 
@@ -129,10 +128,12 @@ typeDec(G,fun(var(X),T,AS,E),[(var(X),arrow(_,T))|G]) :-
 typeDec(G,funRec(var(X),T,AS,E),[(var(X),arrow(TS,T))|G]):-
 	write("funrec\n"),
 	append(AS,[],TS),
+	write("app1\n"),
 	append(G,AS,G2),
-	append(G,(var(X),arrow(TS,T)),G2),
+	write("app2\n"),
+	append(G2,(var(X),arrow(TS,T)),G3),
 	write("append2\n"), 
-	typeExpr(G2,E,T),
+	typeExpr(G3,E,T),
 	write("finRec\n").
 
 % ABS 

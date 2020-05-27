@@ -1,10 +1,10 @@
 open Ast
 open Env
+
 type value = Im of int  
             | B of bool 
-            | FClo of expr * (string list) 
-
-
+            | FClo of value * (string list) * t
+           
 
 let pi f vs =
   match f with
@@ -75,18 +75,29 @@ and eval_stat env s =
           | false -> ( Printf.printf"false \n" )
      
       )
-      
+(*return v associé à x 
 and eval_arg env a = 
   match a with 
   |ASTArg(a,p,t) -> 
     (
-      let env1 = (add env a t) in 
-        env1
+      match (eval_expr a) with 
+        | ASTId x -> (x,(get env x ))
+      (*et env1 = (get env a t) in 
+        env1*)
     )
-and eval_args env ars =
+
+    *)
+(*ABS*)
+
+and eval_abs env (args,vals) =
+    match (args,vals) with
+    ([],[])->[]
+    |x::xs,v::vs ->(x,(eval_expr env v))::eval_abs env (xs,vs)
+ 
+and eval_args ars =
   match ars with
-  [a] -> eval_arg a 
-  e::es -> (eval_arg e):: eval_args es   
+  [] -> [] 
+  |ASTArg (e,p,t)::es -> e::(eval_args es)   
 
 and eval_expr env e =
   match e with
@@ -100,19 +111,30 @@ and eval_expr env e =
                               | B false -> (eval_expr env e3) 
     
     )
-   (* | ASTArgsE(ars,e) -> *)
-    
-
+    (*APP*)
+    (*| ASTargs (ars,e)->
+        match 
+    *)
+    | ASTExpressions(e,es)-> (
+        let  ASTId (x) =e in
+        let e1 = get env x  in 
+          match e1 with
+            FClo(e1,args,env1) ->(
+              let env2= (eval_abs env (args,es))  in 
+                 (eval_expr env2 e)
+            ) 
+    )
 and eval_dec env d = 
 match d with 
 (*CONST Ident Type eXPR)*)
-  ASTConst (e1,e2,e3) ->(
+  ASTConst(e1,e2,e3) ->(
                 let Im n = (eval_expr env e3) in 
                 add env e1 (Im n)
   )
   | ASTFun (f,i,t,ars,e) ->
-       let arg= eval_args ars in
-         add env i FClo(e,arg,env,i)
+      let ASTId x = i in 
+        let arg= eval_args ars in
+            add env i (FClo(e,arg,env) )
 
  
 and eval_exprs env e =

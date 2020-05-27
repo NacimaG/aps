@@ -1,1 +1,1 @@
-[CONST x int 3;FUN REC f int [y:int]  (if (eq y 0) 1 (mul y (f (sub(not a) y 1))) ) ; ECHO (f 3)]
+[CONST x int 3;FUN REC f int [y:int]  (if (eq y 0) 1 (mul y (f (sub y 1))) ) ; ECHO (f 3)]

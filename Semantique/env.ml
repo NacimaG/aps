@@ -1,10 +1,12 @@
 
 type t = (string * v) list
+
 and v =
     Im of int
+  | B of bool 
   | ASTPrim of (v array -> v)
   | FClo of v * (string list) * t
-  | RClo of string * v * (string list) * t
+  | RClo of v * (string list)* t * string
 
 
 let add r x v = (x,v)::r

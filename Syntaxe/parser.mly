@@ -82,7 +82,7 @@ args:
 	 /* | ASTFun of func * typeAps * arg list * expr */
 dec:
 		 CONST IDENT typeAps expr 										{ASTConst ($2,$3,$4)}
-		|FUN IDENT typeAps LBRA args RBRA expr 	  		{ASTFun (Ast.FUN, ASTId($2), $3, $5, $7)}
+		|FUN IDENT typeAps LBRA args RBRA expr 	  		{ASTFun (ASTId($2), $3, $5, $7)}
 		|FUN REC IDENT typeAps LBRA args RBRA expr		{ASTRec (Ast.FUN, Ast.REC, ASTId($3), $4, $6, $8)}
 		;
 

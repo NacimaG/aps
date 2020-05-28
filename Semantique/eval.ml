@@ -1,10 +1,15 @@
 open Ast
 open Env
+open Printf
 
-type value = Im of int  
-            | B of bool 
-            | FClo of value * (string list) * t
-           
+type t = (string * v) list
+
+and v =
+    Im of int
+  | B of bool 
+  | ASTPrim of (v array -> v)
+  | FClo of expr * (string list) * t
+  | RClo of expr * (string list)* t * string
 
 let pi f vs =
   match f with
@@ -46,62 +51,21 @@ let pi f vs =
     )
 
   (**********************************)      
-let rec eval_cmds env cm = 
-  match cm with 
-    | ASTTerm s -> eval_stat env s
-    | ASTNTermD (d, c) -> (
-      let env1 = eval_dec env d in
-        eval_cmds env1 c 
-    )
-    | ASTNTermS(s,p,c) ->(
-        eval_stat env s ;
-        eval_cmds env c
-      )
 
 
-and eval_prog env p =
-  match p with
-    ASTProg (cs)->( eval_cmds env cs 
 
-    )
 
-and eval_stat env s =
-  match s with
-    | ASTEcho (e) -> (
-	match (eval_expr env e) with
-        Im n -> ( Printf.printf"%d\n" n )
-      | B b -> match b with 
-            true -> ( Printf.printf"true \n")
-          | false -> ( Printf.printf"false \n" )
-     
-      )
-(*return v associé à x 
-and eval_arg env a = 
-  match a with 
-  |ASTArg(a,p,t) -> 
-    (
-      match (eval_expr a) with 
-        | ASTId x -> (x,(get env x ))
-      (*et env1 = (get env a t) in 
-        env1*)
-    )
-
-    *)
-(*ABS*)
-
-and eval_abs env (args,vals) =
-    match (args,vals) with
-    ([],[])->[]
-    |x::xs,v::vs ->(x,(eval_expr env v))::eval_abs env (xs,vs)
  
-and eval_args ars =
+let rec eval_args ars =
   match ars with
   [] -> [] 
-  |ASTArg (e,p,t)::es -> e::(eval_args es)   
+  |ASTArg (e,p,t)::es -> (let ASTId x = e in x) :: (eval_args es)
+
+  (*(eval_expr env e)::(eval_args env es)   *)
 
 and eval_expr env e =
   match e with
-      Ast.ASTNum n -> Im n
+    ASTNum n -> Im(v(n))
     | ASTId x -> get env x
     | ASTPrim(f,es) -> (
         (pi f) (Array.map (eval_expr env) (Array.of_list es))
@@ -111,37 +75,75 @@ and eval_expr env e =
                               | B false -> (eval_expr env e3) 
     
     )
-    (*APP*)
-    (*| ASTargs (ars,e)->
-        match 
-    *)
     | ASTExpressions(e,es)-> (
-        let  ASTId (x) =e in
-        let e1 = get env x  in 
-          match e1 with
-            FClo(e1,args,env1) ->(
-              let env2= (eval_abs env (args,es))  in 
-                 (eval_expr env2 e)
-            ) 
+       (* match e with *)
+        let ASTId(x) = e in 
+          let e1 =  get env x  in 
+            match e1 with
+              FClo(e1,args,env1) ->(
+                let env2= adds env  args (eval_exprs env es) in 
+                  eval_expr env2 e1
+              )
+              | RClo(e,args,envC,x) -> (
+                   let env2 =  adds env args (eval_exprs env es) in
+                      eval_expr env2 e
+              
+          )
     )
-and eval_dec env d = 
-match d with 
-(*CONST Ident Type eXPR)*)
-  ASTConst(e1,e2,e3) ->(
-                let Im n = (eval_expr env e3) in 
-                add env e1 (Im n)
-  )
-  | ASTFun (f,i,t,ars,e) ->
-      let ASTId x = i in 
-        let arg= eval_args ars in
-            add env i (FClo(e,arg,env) )
-
- 
 and eval_exprs env e =
   match e with 
-  [] -> Array.of_list []
+  [] -> []
   (*[x] -> (Array.of_list [(eval_expr env  x)] )*)
- (*|x::xs-> Array.of_list ((eval_expr env x)::(Array.to_list(eval_exprs env xs)))*)
+  |x::xs->(eval_expr env x)::(eval_exprs env xs)
+ 
+  and v n =	n
+
+
+  and eval_stat env s =
+  match s with 
+    ASTEcho(e1) -> let tmp= (eval_expr env e1) in 
+      match tmp with 
+        | Im(n) -> Printf.printf "%d\n" n
+
+
+  and eval_dec env d = 
+  match d with 
+  (*CONST Ident Type eXPR)*)
+    ASTConst(e1,e2,e3) ->(
+                  let Im n = (eval_expr env e3) in 
+                  add env e1 (Im n)
+    )
+    | ASTFun (i,t,ars,e)->(
+          let ASTId x = i in 
+          let arg= (eval_args ars) in
+              add env x (FClo (e,arg,env))
+              )
+    |ASTRec(e,e0,e1,e2,e3,e4) -> (
+      let ASTId x= e1 in 
+      let args = (eval_args e3) in
+		      add env x (RClo(e4,args,env,x))
+    )
+   
+
+and eval_cmds env cm = 
+    match cm with 
+      | ASTTerm s -> eval_stat env s
+      | ASTNTermD (d, c) -> (
+        let env1 = eval_dec env d in
+          eval_cmds env1 c 
+      )
+      | ASTNTermS(s,p,c) ->(
+          eval_stat env s ;
+          eval_cmds env c
+        )
+  
+
+
+and eval_prog env p =
+  match p with
+    ASTProg (cs)->( eval_cmds env cs 
+
+    )
 
 
 let parse_prog ic =

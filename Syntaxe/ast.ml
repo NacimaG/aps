@@ -31,7 +31,7 @@ and typeAps =
 	
 and dec =
 	 ASTConst of string * typeAps * expr
-	 | ASTFun of func * expr * typeAps * arg list * expr
+	 | ASTFun of expr * typeAps * arg list * expr
 	 | ASTRec of func * rc * expr * typeAps * arg list * expr
  
 and stat =

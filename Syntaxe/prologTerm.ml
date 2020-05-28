@@ -113,7 +113,7 @@ let rec print_expr e =
 			Printf.printf ")"
 		)
 		
-		| ASTFun (f, i, t, ars, e) -> (
+		| ASTFun (i, t, ars, e) -> (
 			Printf.printf "fun" ;
 			Printf.printf "(";
 			print_expr i;

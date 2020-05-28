@@ -105,7 +105,8 @@ typeExprs(G,[E|ES],[T|TS]) :-
 
 typeStat(G,echo(E),void) :-
 	write("stat\n"), 
-	typeExpr(G,E,_).    
+	typeExpr(G,E,_),
+	write("out\n").    
 
 
 
@@ -118,11 +119,17 @@ typeDec(G,const(X;T,E),[(X,T)|G]) :-
 
 %Fun
 
-typeDec(G,fun(var(X),T,AS,E),[(var(X),arrow(_,T))|G]) :-
+
+typeDec(G,fun(var(X),T,A,E),[(var(X),arrow(_,T))|G]) :-
+	append(G,A,G2) , 
+	typeExpr(G2,E,T).
+
+/*typeDec(G,fun(var(X),T,AS,E),[(var(X),arrow(TS,T))|G]) :-
 	write("fun\n"),
 	append(G,AS,G1),
-	typeExpr(G1,E,T).
-
+	write("aperererep\n"),
+	typeExpr(G1,E,TS).
+*/
 %FuncRec (FUN REC IDENT typeAps [args] expr)
 
 typeDec(G,funRec(var(X),T,AS,E),[(var(X),arrow(TS,T))|G]):-

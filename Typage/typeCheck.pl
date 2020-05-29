@@ -1,13 +1,3 @@
-%===============================================================================
-%== UPMC/master/info/4I506 -- Janvier 2016                                    ==
-%== SU/FSI/master/info/MU4IN503 -- Janvier 2020                               ==
-%== Analyse des programmes et sémantiques                                     ==
-%===============================================================================
-%== Fichier: typrog.pl                                                        ==
-%== Vérification de type                                                      ==
-%===============================================================================
-
-%%
 % Type ::= int | bool | void | arrow([Type],Type)
 
 %%
@@ -197,4 +187,3 @@ main_stdin :-
     print(R),
     nl,
     exitCode(R).
-

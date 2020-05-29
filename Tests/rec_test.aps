@@ -1,1 +1,1 @@
-[FUN REC f int [x:int] (if (eq x 42) x 5);ECHO (f 42)]
+[FUN REC f int [x:int, y:int] (if (lt x y) 0 5);ECHO (f 3 6)]

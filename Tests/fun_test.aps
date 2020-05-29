@@ -1,2 +1,1 @@
-[CONST y int 3;FUN f int [y:int] (add y 2); ECHO (f 10)]
-
+[CONST y int 3;FUN f int [y:int] (add y 3); ECHO (f 2)]

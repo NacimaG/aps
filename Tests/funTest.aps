@@ -1,5 +1,6 @@
 [
+    CONST a int 1 ; CONST b int 2; CONST z int 3; CONST y int 4;
     FUN v int [a:int, b:int] (eq (add a v) true);
-    FUN REC v int [z:int, y:int] (add (add z v) y);
-    ECHO v
+    FUN REC i int [z:int, y:int] (add (add z i) y);
+    ECHO (v 1)
 ]

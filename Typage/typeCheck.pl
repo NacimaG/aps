@@ -34,10 +34,6 @@ extract(X,[X|_]).
 extract(X,[_|XS]) :- extract(X,XS).
 
 
-
-
-appends([],TS,TS).
-appends([(_,T)|L],LS,TS):- append([T],LS,TS), appends(L,TS,_).
 %%
 % Expr
 typeExpr(_,num(_),int).

@@ -1,1 +1,1 @@
-[CONST v int (add v 4) ; ECHO v]
+[CONST a int 1; CONST v int (add a 4) ; ECHO v]

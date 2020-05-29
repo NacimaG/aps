@@ -1,1 +1,1 @@
-[ECHO v ]
+[CONST v int (add 3 2);ECHO v ]

@@ -1,1 +1,0 @@
-[CONST a int 1; CONST b int 4;FUN v int [a:int, b:int]  (add (add a v) b); ECHO (v 5)]

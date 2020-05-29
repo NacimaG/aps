@@ -1,0 +1,1 @@
+[FUN f int [y:int, z:int] (add y z); ECHO (f (add 1 3) 1)]

@@ -1,1 +1,0 @@
-[FUN f int [a:int] ((add a 5)(mul a 5)) ;ECHO 5]

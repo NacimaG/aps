@@ -1,1 +1,0 @@
-[CONST a int 1; FUN REC v int [a:int] (if (eq v 0) 1 (add a v)) ; ECHO (v 3)]
